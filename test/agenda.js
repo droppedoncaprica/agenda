@@ -888,6 +888,21 @@ describe('Job', function() {
         startService();
       });
 
+      it('Should accept a date object for an interval', function(done) {
+        var serviceError = function(e) { done(e); };
+        var receiveMessage = function(msg) {
+          if( msg == "ran" ) {
+            done();
+          } else return done('Job did not run!');
+        };
+
+        var serverPath = path.join( __dirname, 'fixtures', 'agenda-instance.js' );
+        var n = cp.fork( serverPath, [ mongoCfg, "every-date" ] );
+
+        n.on('message', receiveMessage);
+        n.on('error', serviceError);
+      });
+
       it('Should properly run jobs when defined via an array', function(done) {
         var ran1 = false, ran2 = true, doneCalled = false;
 
@@ -909,7 +924,6 @@ describe('Job', function() {
             }
           } else return done( new Error('Jobs did not run!') );
         };
-
 
         var serverPath = path.join( __dirname, 'fixtures', 'agenda-instance.js' );
         var n = cp.fork( serverPath, [ mongoCfg, 'daily-array' ] );

@@ -71,5 +71,14 @@ module.exports = {
     });
 
     agenda.now('now run this job');
+  },
+  "every-date" : function(agenda) {
+    agenda.define('every date interval job', function(job, done) {
+      process.send('ran');
+      done();
+      process.exit(0);
+    });
+
+    agenda.every( new Date(100), 'every date interval job' );
   }
 };
